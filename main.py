@@ -10,14 +10,14 @@ def am_pm(events):
         event['start_time'], event['end_time'] = event['time'].split(" - ")
 
         parts = event['start_time'].split(" ")
-        start_time   = parts[0]  # Heure au format 'hh:mm'
-        start_period = parts[1]  # AM ou PM
+        start_time   = parts[0]  # format 'hh:mm'
+        start_period = parts[1]  # AM or PM
 
         start_h, start_m = start_time.split(":")
          
         parts = event['end_time'].split(" ")
-        end_time   = parts[0]  # Heure au format 'hh:mm'
-        end_period = parts[1]  # AM ou PM
+        end_time   = parts[0]  # format 'hh:mm'
+        end_period = parts[1]  # AM or PM
 
         end_h, end_m = end_time.split(":")
         
@@ -103,13 +103,13 @@ def scrap():
 
         time.sleep(1)
 
-        # Cliquez sur le bouton de la semaine
+        # Click on week button
         page.click('button.fc-agendaWeek-button.fc-button.fc-state-default')
         print("Clicked on the week button")
         time.sleep(1)
 
-        # Cliquez sur le bouton précédent plusieurs fois
-        for _ in range(3):
+        # Click on previous button
+        for _ in range(4):
             page.click('button.fc-prev-button.fc-button.fc-state-default.fc-corner-left')
             print("Clicked on the previous button")
             time.sleep(1)
@@ -121,7 +121,7 @@ def scrap():
         # Extract details from all_html
         all_events = extract_event_details(all_html)
 
-        # Extraire la date
+        # Extract date
         date_element = page.query_selector("th.fc-day-header.fc-widget-header.fc-mon.fc-past")
         data_date = date_element.get_attribute("data-date")
         year, month, day = data_date.split('-')
