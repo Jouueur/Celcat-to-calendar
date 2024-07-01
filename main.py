@@ -65,10 +65,20 @@ def extract_event_details(all_html):
         
     return all_events
 
-def create_ics(events, year, month, day):
+def create_ics(events, year, month, day, lesson_a_day):
     calendar = Calendar()
 
+    count_day = 0
+    count_event = 0
+    more_days = 0
+
     for event in events:
+
+        if count_event == lesson_a_day[count_day]:
+            more_days += 1
+            count_day += 1
+            count_event = 0
+
         e = Event()
         e.name = event.get("title", "No Title")
         
@@ -76,13 +86,15 @@ def create_ics(events, year, month, day):
             e.description = " | ".join(event["details"])
         
         # Assuming time is in 24-hour format for simplicity, adapt as needed
-        start_time = datetime(int(year), int(month), int(day), int(event['start_h']), int(event['start_m']), tzinfo=pytz.UTC)
-        end_time   = datetime(int(year), int(month), int(day), int(event['end_h']), int(event['end_m']), tzinfo=pytz.UTC)
+        start_time = datetime(int(year), int(month), int(day) + more_days, int(event['start_h']), int(event['start_m']), tzinfo=pytz.UTC)
+        end_time   = datetime(int(year), int(month), int(day) + more_days, int(event['end_h']), int(event['end_m']), tzinfo=pytz.UTC)
 
         e.begin = start_time
         e.end = end_time
 
         calendar.events.add(e)
+
+        count_event += 1
 
     with open('calendar.ics', 'w') as f:
         f.writelines(calendar)
@@ -128,18 +140,20 @@ def scrap():
         print(f"Year: {year}, Month: {month}, Day: {day}")
 
         lessons = page.query_selector_all("div.fc-event-container")
+        lesson_a_day = []
 
-        for lesson in lessons:
-            events = lesson.query_selector_all("a.fc-time-grid-event")
+        for i in range(len(lessons)):
+            events = lessons[i].query_selector_all("a.fc-time-grid-event")
             
             content_count = 0
-            
-            for event in events:
-                contents = event.query_selector_all("div.fc-content")
-                
-                content_count += len(contents)
-        
-            print(f'Nombre de div.fc-content dans ce div.fc-event-container: {content_count}')
+
+            if i == 1 or i == 3 or i == 5 or i == 7 or i == 9:
+                for event in events:
+                    contents = event.query_selector_all("div.fc-content")
+                    
+                    content_count += len(contents)
+                lesson_a_day.append(content_count)
+                print(f'Nombre de div.fc-content dans ce div.fc-event-container: {content_count}')
 
 
 
@@ -148,7 +162,7 @@ def scrap():
 
 
         # Create ICS file
-        create_ics(all_events, year, month, day)
+        create_ics(all_events, year, month, day, lesson_a_day)
 
         time.sleep(5)
         browser.close()
