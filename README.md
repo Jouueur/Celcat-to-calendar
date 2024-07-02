@@ -24,8 +24,12 @@ Pour installer les dépendances du projet, utilisez l'une des méthodes suivante
 2. Lancer `main.py`
 3. Récupérer `calendar.ics`
 4. Se rendre sur google agenda et appuyer sur **+** dans **autres agenda**
+
 ![image](https://github.com/Jouueur/Celcat-to-calendar/assets/95230708/efa529ea-cdbd-4b38-86d5-c5107215a366)
-5. 
+5. Choisir importer
+
+![image](https://github.com/Jouueur/Celcat-to-calendar/assets/95230708/8dfb7523-43fa-413c-a8da-85c03416e26b)
+6. Sélectionnez votre fichier et appuyez sur **importer**
 
 
 
