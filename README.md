@@ -22,4 +22,5 @@ Pour installer les dépendances du projet, utilisez l'une des méthodes suivante
 ## Utilisation
 1. Se rendre dans `creditentials.py` et mettre ses informations
 2. Lancer `main.py`
- 
+3. Récupérer `calendar.ics`
+4. Se rendre sur google agenda et appuyer sur **+** dans **autres agenda**
