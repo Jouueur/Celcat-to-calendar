@@ -16,3 +16,6 @@ Pour installer les dépendances du projet, utilisez l'une des méthodes suivante
     ```sh
     pip install -r requirements.txt
     ```
+## Utilisation
+1. Se rendre dans `creditentials.py` et mettre ses informations
+2. Lancer `main.py`
