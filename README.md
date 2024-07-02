@@ -29,6 +29,7 @@ Pour installer les dépendances du projet, utilisez l'une des méthodes suivante
 5. Choisir importer
 
 ![image](https://github.com/Jouueur/Celcat-to-calendar/assets/95230708/8dfb7523-43fa-413c-a8da-85c03416e26b)
+
 6. Sélectionnez votre fichier et appuyez sur **importer**
 
 
