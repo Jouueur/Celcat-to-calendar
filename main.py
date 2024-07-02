@@ -1,9 +1,13 @@
-from playwright.sync_api import sync_playwright
+import time
+import pytz
+from datetime import datetime
 from bs4 import BeautifulSoup
 from ics import Calendar, Event
-from datetime import datetime
-import pytz
-import time
+from colorama import init, Fore, Style
+from playwright.sync_api import sync_playwright
+
+# Initialize colorama
+init(autoreset=True)
 
 
 def am_pm(events):
@@ -117,7 +121,7 @@ def create_ics(events, year, month, day, lesson_a_day):
 
     with open('calendar.ics', 'w') as f:
         f.writelines(calendar)
-    print("ICS file created: calendar.ics")
+    print(Fore.BLUE + "ICS file created: \n" + Fore.RESET + "\tcalendar.ics")
 
 
 def scrap():
@@ -135,16 +139,18 @@ def scrap():
 
         time.sleep(1)
 
+        print(Fore.BLUE + "Playwright: ")
+
         # Click on week button
         page.click('button.fc-agendaWeek-button.fc-button.fc-state-default')
-        print("Clicked on the week button")
+        print("\tClicked on the week button")
         time.sleep(1)
 
         # Click on previous button
         for _ in range(4):
             page.click(
                 'button.fc-prev-button.fc-button.fc-state-default.fc-corner-left')
-            print("Clicked on the previous button")
+            print("\tClicked on the previous button")
             time.sleep(1)
 
         # Scraping
@@ -161,11 +167,12 @@ def scrap():
         data_date = date_element.get_attribute("data-date")
 
         year, month, day = data_date.split('-')
-        print(f"Year: {year}, Month: {month}, Day: {day}")
 
         # I cooked
         lessons = page.query_selector_all("div.fc-event-container")
         lesson_a_day = []
+
+        print(Fore.BLUE + "Bs4 scrapping: ")
 
         for i in range(len(lessons)):
             events = lessons[i].query_selector_all("a.fc-time-grid-event")
@@ -179,7 +186,7 @@ def scrap():
                     content_count += len(contents)
                 lesson_a_day.append(content_count)
                 print(
-                    f'Nombre de cours pour un jour: {content_count}')
+                    f'\tNombre de cours pour un jour: {content_count}')
 
         # Create ICS file
         create_ics(all_events, year, month, day, lesson_a_day)
