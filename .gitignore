@@ -1,5 +1,6 @@
 # Ignore the calendar.ics file
 calendar.ics
+creditentials.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
