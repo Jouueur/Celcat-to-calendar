@@ -134,25 +134,27 @@ def scrap():
         time.sleep(1)
 
         # login
+        print(Fore.BLUE + "Playwright: ")
         page.fill('input#Name', creditentials.USERNAME)
+        print("\tUsername filled")
         page.fill('input#Password', creditentials.PASSWORD)
+        print("\tPassword filled")
         page.click('button[type=submit]')
+        print("\tConnecting...")
 
         time.sleep(1)
-
-        print(Fore.BLUE + "Playwright: ")
 
         # Click on week button
         page.click('button.fc-agendaWeek-button.fc-button.fc-state-default')
         print("\tClicked on the week button")
         time.sleep(1)
 
-        # Click on previous button
-        for _ in range(4):
-            page.click(
-                'button.fc-prev-button.fc-button.fc-state-default.fc-corner-left')
-            print("\tClicked on the previous button")
-            time.sleep(1)
+        # # Click on previous button in case I need to change week
+        # for _ in range(4):
+        #     page.click(
+        #         'button.fc-prev-button.fc-button.fc-state-default.fc-corner-left')
+        #     print("\tClicked on the previous button")
+        #     time.sleep(1)
 
         # Scraping
         divs = page.query_selector_all("div.fc-content")
