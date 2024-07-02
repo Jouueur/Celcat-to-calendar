@@ -1,10 +1,10 @@
 import time
 import pytz
 import creditentials
-from datetime import datetime
 from bs4 import BeautifulSoup
 from ics import Calendar, Event
 from colorama import init, Fore, Style
+from datetime import datetime, timedelta
 from playwright.sync_api import sync_playwright
 
 # Initialize colorama
@@ -107,10 +107,10 @@ def create_ics(events, year, month, day, lesson_a_day, calendar):
         if "details" in event:
             e.description = " | ".join(event["details"])
 
-        start_time = datetime(int(year), int(month) + 1, int(
-            day) + more_days, int(event['start_h']), int(event['start_m']), tzinfo=pytz.UTC)
-        end_time = datetime(int(year), int(month) + 1, int(
-            day) + more_days, int(event['end_h']), int(event['end_m']), tzinfo=pytz.UTC)
+        start_time = datetime(int(year), int(month), int(
+            day), int(event['start_h']), int(event['start_m']), tzinfo=pytz.UTC) + timedelta(days=more_days)
+        end_time = datetime(int(year), int(month), int(
+            day), int(event['end_h']), int(event['end_m']), tzinfo=pytz.UTC) + timedelta(days=more_days)
 
         e.begin = start_time
         e.end = end_time
