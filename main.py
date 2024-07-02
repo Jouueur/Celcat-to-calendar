@@ -1,5 +1,6 @@
 import time
 import pytz
+import creditentials
 from datetime import datetime
 from bs4 import BeautifulSoup
 from ics import Calendar, Event
@@ -133,8 +134,8 @@ def scrap():
         time.sleep(1)
 
         # login
-        page.fill('input#Name', '')
-        page.fill('input#Password', '')
+        page.fill('input#Name', creditentials.USERNAME)
+        page.fill('input#Password', creditentials.PASSWORD)
         page.click('button[type=submit]')
 
         time.sleep(1)
