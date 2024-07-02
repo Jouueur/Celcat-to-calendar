@@ -1,3 +1,6 @@
+## Description
+Permet de te connecter à un emplois du temps CY-tech cergy (CELCAT) et le scraper pour return un fichier `calendar.ics`, importable sur google calendar.
+
 ## Installation
 
 Pour installer les dépendances du projet, utilisez l'une des méthodes suivantes :
@@ -19,3 +22,4 @@ Pour installer les dépendances du projet, utilisez l'une des méthodes suivante
 ## Utilisation
 1. Se rendre dans `creditentials.py` et mettre ses informations
 2. Lancer `main.py`
+ 
