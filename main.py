@@ -8,32 +8,44 @@ import time
 
 def am_pm(events):
     for event in events:
-        event['start_time'], event['end_time'] = event['time'].split(" - ")
+        # For english computer
+        if 'AM' in event['time'] or 'PM' in event['time']:
+            event['start_time'], event['end_time'] = event['time'].split(" - ")
 
-        parts = event['start_time'].split(" ")
-        start_time = parts[0]  # format 'hh:mm'
-        start_period = parts[1]  # AM or PM
+            parts = event['start_time'].split(" ")
+            start_time = parts[0]  # format 'hh:mm'
+            start_period = parts[1]  # AM or PM
 
-        start_h, start_m = start_time.split(":")
+            start_h, start_m = start_time.split(":")
 
-        parts = event['end_time'].split(" ")
-        end_time = parts[0]  # format 'hh:mm'
-        end_period = parts[1]  # AM or PM
+            parts = event['end_time'].split(" ")
+            end_time = parts[0]  # format 'hh:mm'
+            end_period = parts[1]  # AM or PM
 
-        end_h, end_m = end_time.split(":")
+            end_h, end_m = end_time.split(":")
 
-        if start_period == 'PM' and start_h != '12':
-            event['start_h'] = int(start_h) + 12
+            if start_period == 'PM' and start_h != '12':
+                event['start_h'] = int(start_h) + 12
+            else:
+                event['start_h'] = int(start_h)
+
+            if end_period == 'PM' and end_h != '12':
+                event['end_h'] = int(end_h) + 12
+            else:
+                event['end_h'] = int(end_h)
+
+        # For french computer
         else:
+            event['start_time'], event['end_time'] = event['time'].split(" - ")
+
+            start_h, start_m = event['start_time'].split(":")
+            end_h, end_m = event['end_time'].split(":")
+
             event['start_h'] = int(start_h)
-
-        if end_period == 'PM' and end_h != '12':
-            event['end_h'] = int(end_h) + 12
-        else:
             event['end_h'] = int(end_h)
 
-        event['start_m'] = start_m
-        event['end_m'] = end_m
+            event['start_m'] = start_m
+            event['end_m'] = end_m
 
     return events
 
@@ -83,14 +95,17 @@ def create_ics(events, year, month, day, lesson_a_day):
             count_event = 0
 
         e = Event()
-        e.name = event.get("title", "No Title")
+
+        e.name = event['details'][1]
+
+        e.location = event['details'][2]
 
         if "details" in event:
             e.description = " | ".join(event["details"])
 
-        start_time = datetime(int(year), int(month), int(
+        start_time = datetime(int(year), int(month) + 1, int(
             day) + more_days, int(event['start_h']), int(event['start_m']), tzinfo=pytz.UTC)
-        end_time = datetime(int(year), int(month), int(
+        end_time = datetime(int(year), int(month) + 1, int(
             day) + more_days, int(event['end_h']), int(event['end_m']), tzinfo=pytz.UTC)
 
         e.begin = start_time
@@ -142,8 +157,9 @@ def scrap():
         # Extract date
         date_element = page.query_selector(
             "th.fc-day-header.fc-widget-header.fc-mon.fc-past")
+
         data_date = date_element.get_attribute("data-date")
-        print(data_date)
+
         year, month, day = data_date.split('-')
         print(f"Year: {year}, Month: {month}, Day: {day}")
 
@@ -163,7 +179,7 @@ def scrap():
                     content_count += len(contents)
                 lesson_a_day.append(content_count)
                 print(
-                    f'Nombre de div.fc-content dans ce div.fc-event-container: {content_count}')
+                    f'Nombre de cours pour un jour: {content_count}')
 
         # Create ICS file
         create_ics(all_events, year, month, day, lesson_a_day)
