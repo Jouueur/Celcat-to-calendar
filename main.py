@@ -85,8 +85,7 @@ def extract_event_details(all_html):
     return all_events
 
 
-def create_ics(events, year, month, day, lesson_a_day):
-    calendar = Calendar()
+def create_ics(events, year, month, day, lesson_a_day, calendar):
 
     count_day = 0
     count_event = 0
@@ -120,9 +119,7 @@ def create_ics(events, year, month, day, lesson_a_day):
 
         count_event += 1
 
-    with open('calendar.ics', 'w') as f:
-        f.writelines(calendar)
-    print(Fore.BLUE + "ICS file created: \n" + Fore.RESET + "\tcalendar.ics")
+    return calendar
 
 
 def scrap():
@@ -133,8 +130,7 @@ def scrap():
 
         time.sleep(1)
 
-        # login
-        print(Fore.BLUE + "Playwright: ")
+        print(Fore.BLUE + "Playwright connecting: ")
         page.fill('input#Name', creditentials.USERNAME)
         print("\tUsername filled")
         page.fill('input#Password', creditentials.PASSWORD)
@@ -149,52 +145,68 @@ def scrap():
         print("\tClicked on the week button")
         time.sleep(1)
 
-        # # Click on previous button in case I need to change week
-        # for _ in range(4):
-        #     page.click(
-        #         'button.fc-prev-button.fc-button.fc-state-default.fc-corner-left')
-        #     print("\tClicked on the previous button")
-        #     time.sleep(1)
-
-        # Scraping
-        divs = page.query_selector_all("div.fc-content")
-        all_html = [div.inner_html() for div in divs]
-
-        # Extract details from all_html
-        all_events = extract_event_details(all_html)
+        # Click on previous button in case I need to change week
+        for _ in range(4):
+            page.click(
+                'button.fc-prev-button.fc-button.fc-state-default.fc-corner-left')
+            print("\tClicked on the previous button")
+            time.sleep(1)
 
         # Extract date
         date_element = page.query_selector(
             "th.fc-day-header.fc-widget-header.fc-mon.fc-past")
 
+        days = ['', 'Lundi   ', '', 'Mardi   ', '',
+                'Mercredi', '', 'Jeudi   ', '', 'Vendredi']
+
         data_date = date_element.get_attribute("data-date")
 
         year, month, day = data_date.split('-')
 
-        # I cooked
-        lessons = page.query_selector_all("div.fc-event-container")
-        lesson_a_day = []
-
         print(Fore.BLUE + "Bs4 scrapping: ")
 
-        for i in range(len(lessons)):
-            events = lessons[i].query_selector_all("a.fc-time-grid-event")
+        calendar = Calendar()
 
-            content_count = 0
+        for _ in range(2):
+            # Scraping
+            divs = page.query_selector_all("div.fc-content")
+            all_html = [div.inner_html() for div in divs]
 
-            if i == 1 or i == 3 or i == 5 or i == 7 or i == 9:
-                for event in events:
-                    contents = event.query_selector_all("div.fc-content")
+            # Extract details from all_html
+            all_events = extract_event_details(all_html)
 
-                    content_count += len(contents)
-                lesson_a_day.append(content_count)
-                print(
-                    f'\tNombre de cours pour un jour: {content_count}')
+            lessons = page.query_selector_all("div.fc-event-container")
+            # Count the amount of lesson each day to know when to pass a day (I cooked)
+            lesson_a_day = []
+            for i in range(len(lessons)):
+                events = lessons[i].query_selector_all("a.fc-time-grid-event")
 
-        # Create ICS file
-        create_ics(all_events, year, month, day, lesson_a_day)
+                content_count = 0
 
-        time.sleep(5)
+                if i == 1 or i == 3 or i == 5 or i == 7 or i == 9:
+                    for event in events:
+                        contents = event.query_selector_all("div.fc-content")
+
+                        content_count += len(contents)
+                    lesson_a_day.append(content_count)
+                    print(
+                        f'\tNombre de cours {days[i]}: {content_count}')
+
+            # Create ICS file
+
+            calendar = create_ics(all_events, year, month,
+                                  day, lesson_a_day, calendar)
+
+            page.click(
+                'button.fc-next-button.fc-button.fc-state-default.fc-corner-right')
+            print(Fore.YELLOW + "\tClicked on the next week button")
+
+        with open('calendar.ics', 'w') as f:
+            f.writelines(calendar)
+        print(Fore.BLUE + "ICS file created: \n" +
+              Fore.RESET + "\tcalendar.ics")
+
+        time.sleep(3)
         browser.close()
 
 
